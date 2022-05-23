@@ -9,19 +9,21 @@ rm(list=ls(all=TRUE))
 
 library(forecast)
 library(TSA)
-library(fANCOVA)
+library(car)
+library(lmtest)
+library(FitAR)
 
 # Funciones de usuario
 
-source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funciones-Criterios.Informacion-
-Calidad.Intervalos.R")
+source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funciones-Criterios.Informacion-Calidad.Intervalos.R")
 source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funciones-Criterios.Informacion-Calidad.Intervalos.R")
 source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funcion-regexponencial.R")
 source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funcion-SuavizamientoEstacional.R")
 source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funcion-Descomp.Loess.R")
+source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funciones-BP.LB.test-pruebaDW1.R")
 
 ### ----------------------------------------------------------------------
-### Lectura de datos
+### 1. Lectura de datos
 ### ----------------------------------------------------------------------
 
 # Lectura de la base de datos
@@ -143,7 +145,7 @@ par(adj = 1,
 ##
 
 ### ----------------------------------------------------------------------
-### 3. Planteamiento de modelo exponencial polinomial estacional
+### 3. Preparación para el modelo exponencial polinomial estacional
 ### ----------------------------------------------------------------------
 
 # Definición de variables necesarias
@@ -222,8 +224,8 @@ X1nuevo <- data.frame(t = tnuevo, t2 = t2nuevo, t3 = t3nuevo,
                       cos5=cos5n)
 
 # ------------------------------------------
-# Modelo dos
-# Exponencial polinomial de grado seis con trigonométricas
+# 4. Modelo global
+#    Exponencial polinomial de grado seis con trigonométricas
 # ------------------------------------------
 
 # Crear vector con nombres de los parámetros a usar en la fórmula R 
@@ -236,20 +238,20 @@ param2 <- c(paste0("beta",0:6),
             "gamma5")
 param2
 
-modelo2 <- regexponencial(respuesta = yt,
+modelo_global <- regexponencial(respuesta = yt,
                           data = X1,
                           names.param = param2)
-summary(modelo2)
+summary(modelo_global)
 
 # Cálculo valores ajustados del modelo 2
 
-ythat2 <- ts(fitted(modelo2),
+ythat2 <- ts(fitted(modelo_global),
              frequency = 12,
              start = start(yt))
 
 # Pronósticos. Solo son posibles los pronósticos puntuales
 
-predicciones2 <- predict(modelo2,
+predicciones2 <- predict(modelo_global,
                          newdata = X1nuevo,
                          interval = "prediction")
 predicciones2
@@ -265,45 +267,51 @@ accuracy(ytpron2, ytf)
 
 
 # Cálculo AIC y BIC
-npar2 <- length(coef(modelo2)[coef(modelo2)!=0])
+npar2 <- length(coef(modelo_global)[coef(modelo_global)!=0])
 npar2                                 # Número par?metros modelo 2b
-Criterios2 <- exp.crit.inf.resid(residuales = residuals(modelo2),
+Criterios2 <- exp.crit.inf.resid(residuales = residuals(modelo_global),
                                  n.par = npar2)
 Criterios2
 
 #Gráficos de residuos
 
-plot.ts(residuals(modelo2),
-        ylim = c(min(residuals(modelo2),
-                     -2*summary(modelo2)$sigma,
-                     2*summary(modelo2)$sigma),
-                 max(residuals(modelo2),
-                     -2*summary(modelo2)$sigma,
-                     2*summary(modelo2)$sigma)))
-abline(h = c(-2*summary(modelo2)$sigma,
+par(adj = 0.5)
+plot.ts(residuals(modelo_global),
+        ylim = c(min(residuals(modelo_global),
+                     -2*summary(modelo_global)$sigma,
+                     2*summary(modelo_global)$sigma),
+                 max(residuals(modelo_global),
+                     -2*summary(modelo_global)$sigma,
+                     2*summary(modelo_global)$sigma)),
+        lwd = 1,
+        xlab = "Periodo",
+        ylab = "Residuales")
+abline(h = c(-2*summary(modelo_global)$sigma,
              0,
-             2*summary(modelo2)$sigma),
+             2*summary(modelo_global)$sigma),
        col = 2)
-legend("topleft", legend = c("Modelo 2"),
+legend("topleft", legend = c("Modelo global"),
        lty = 1,
        col = 1,
        lwd = 2)
 
 
-plot(fitted(modelo2),
-     residuals(modelo2),
-     ylim = c(min(residuals(modelo2),
-                  -2*summary(modelo2)$sigma,
-                  2*summary(modelo2)$sigma),
-              max(residuals(modelo2),
-                  -2*summary(modelo2)$sigma,
-                  2*summary(modelo2)$sigma)))
-abline(h = c(-2*summary(modelo2)$sigma,
+plot(fitted(modelo_global),
+     residuals(modelo_global),
+     ylim = c(min(residuals(modelo_global),
+                  -2*summary(modelo_global)$sigma,
+                  2*summary(modelo_global)$sigma),
+              max(residuals(modelo_global),
+                  -2*summary(modelo_global)$sigma,
+                  2*summary(modelo_global)$sigma)),
+     xlab = 'Índice de ventas nominales ajustado',
+     ylab = 'Residuales')
+abline(h = c(-2*summary(modelo_global)$sigma,
              0,
-             2*summary(modelo2)$sigma),
+             2*summary(modelo_global)$sigma),
        col = 2)
 legend("topleft",
-       legend = c("Modelo 2"),
+       legend = c("Modelo global"),
        lty = 1,
        col = 1,
        lwd = 2)
@@ -324,37 +332,95 @@ legend("topleft",
 
 
 ### ----------------------------------------------------------------------
-### 5. Pronóstico
+### 5. Pronósticos del modelo global
 ### ----------------------------------------------------------------------
 
-
-
-
-# ------------------------------------------
 # Comparación gráfica de los pronósticos
-# ------------------------------------------
 
-vector.auxiliar <- c(ytf, ytpron1, ytpron2,
-                     ytpron3, ytpron4)
+vector.auxiliar <- c(ytf, ytpron2)
 par(adj = 0.5)
+plot(datos, lwd = 2,
+     xlab = "Año",
+     ylab = "Índice de ventas nominales")
+lines(ythat2, col = 2, lwd = 2)
+lines(ytpron2, col = 4, lwd = 2)
+grid(col = 'gray', lwd = 1)
+legend('topleft',
+       legend = c('Original', 'Ajustada', 'Pronósticos'),
+       lty = 1,
+       lwd = c(1, 2, 2),
+       col = c(1, 2, 4))
+
+
+
 plot(ytf, type = "b", pch = 19, lty = 1, col = 1, lwd = 2,
      ylab = "Índice de ventas nominales",
      xlab = "Periodo [mmm - yy]",
      ylim = c(min(vector.auxiliar), max(vector.auxiliar)),
-     xaxt = "n",
-     main = "Comparación de los pronósticos para el periodo ex post")
-lines(ytpron1, col = 2, pch = 2, lty = 2, type = "b", lwd = 2)
-lines(ytpron2, col = 3, pch = 3, lty = 3, type = "b", lwd = 2)
-lines(ytpron3, col = 4, pch = 4, lty = 4, type = "b", lwd = 2)
-lines(ytpron4, col = 5, pch = 5, lty = 5, type = "b", lwd = 2)
-legend("topleft",
-       legend = c("Real", "Modelo1", "Modelo 2",
-                  "Modelo 3", "Modelo 4"),
-       col = 1:5,
-       pch = c(19, 2:5),
-       lty = 1:5,
+     xaxt = "n")
+lines(ytpron2, col = 4, pch = 3, lty = 3, type = "b", lwd = 2)
+grid(col = 'gray', lwd = 1)
+legend("bottomright",
+       legend = c("Real", "Modelo global exponencial\ncúbico con trigonométricas"),
+       col = c(1, 4),
+       pch = c(1, 3),
+       lty = c(1, 3),
        lwd = 2)
-axis(1,at = time(ytf), 
+axis(1,at = time(ytf),
      labels = c("dic-20", "ene-21", "feb-21", "mar-21",
                 "abr-21", "may-21", "jun-21", "jul-21",
                 "ago-21", "sep-21", "oct-21", "nov-21"))
+
+### ----------------------------------------------------------------------
+### 6. Verificación de ruido blanco de los errores estructurales
+###    del modelo global
+### ----------------------------------------------------------------------
+
+# Gráficas de la ACF y la PACF de los errores estructurales
+
+acf(as.numeric(residuals(modelo_global)),
+    ci.type = "ma",
+    main = "ACF del modelo global",
+    lag.max = 36,
+    xlab = "Rezago")
+pacf(as.numeric(residuals(modelo_global)),
+     main = "PACF del modelo global",
+     lag.max = 36,
+     xlab = 'Rezago',
+     ylab = 'ACF parcial')
+
+# Test de Ljung-Box
+
+BP.LB.test(residuals(modelo_global),
+           maxlag=36,
+           type="Ljung")
+
+# Test de Dubin-Watson
+
+# pruebaDW1(modelo_global) ## XXXX. ¡PROBLEMAS! XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+### ----------------------------------------------------------------------
+### 7. Identificación de posibles modelos ARMA
+### ----------------------------------------------------------------------
+
+# EACF
+
+eacf <- eacf(residuals(modelo_global),ar.max = 36, ma.max = 36)
+
+# Con selectModel() de la librería FitAR para modelos AR(p)
+
+SelectModel(residuals(modelo_global),lag.max=36,Criterion="AIC",ARModel="AR")
+SelectModel(residuals(modelo_global),lag.max=36,Criterion="BIC",ARModel="AR")
+
+# Usando la función auto.arima() de la librería forecast.
+
+serie_et=ts(residuals(modelo_global), freq = 12,start = c(2001, 1))              # Serie de tiempo de los residuales
+auto.arima(serie_et,ic="aic")
+auto.arima(serie_et,ic="bic")
+
+# Usando armasubsets() de la librería TSA
+
+plot(armasubsets(residuals(modelo_global),
+                 nar=12,nma=12,
+                 y.name='AR',
+                 ar.method='ml'))
