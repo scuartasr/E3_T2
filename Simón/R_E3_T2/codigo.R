@@ -397,7 +397,7 @@ BP.LB.test(residuals(modelo_global),
 
 # Test de Dubin-Watson
 
-# pruebaDW1(modelo_global) ## XXXX. ¡PROBLEMAS! XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#pruebaDW1(modelo_global) ## XXXX. ¡PROBLEMAS! XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 ### ----------------------------------------------------------------------
 ### 7. Identificación de posibles modelos ARMA
