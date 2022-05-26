@@ -21,6 +21,7 @@ source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Est
 source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funcion-SuavizamientoEstacional.R")
 source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funcion-Descomp.Loess.R")
 source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funciones-BP.LB.test-pruebaDW1.R")
+source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Estadistica-III/main/Funcion-regexpo.ErrorARMA.R")
 
 ### ----------------------------------------------------------------------
 ### 1. Lectura de datos
@@ -239,8 +240,8 @@ param2 <- c(paste0("beta",0:6),
 param2
 
 modelo_global <- regexponencial(respuesta = yt,
-                          data = X1,
-                          names.param = param2)
+                                data = X1,
+                                names.param = param2)
 summary(modelo_global)
 
 # Cálculo valores ajustados del modelo 2
@@ -424,3 +425,27 @@ plot(armasubsets(residuals(modelo_global),
                  nar=12,nma=12,
                  y.name='AR',
                  ar.method='ml'))
+
+# ---------------- siguiendo con lo mío ----------------------#
+# Modelo 1 AR(19)
+modelo1 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(19,0,0),method="ML") 
+coef(modelo1)
+
+# Modelo 2 ARMA (7,11)
+modelo2 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(7,0,11),method="ML") 
+coef(modelo2)
+
+# Modelo 3 ARMA(3,9)(1,0)[12]
+modelo3 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(3,0,9),seasonal=list(order=c(1,0,0)),
+                            method="ML")
+coef(modelo3)
+
+# Modelo 4 12x12 renglón 3, incluir a phi7 y theta 10
+modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(12,0,12),seasonal=list(order=c(1,0,0)),
+                            fixed= c(NA,NA,NA,rep(0,3),NA,rep(0,4),NA,rep(0,3),NA,rep(0,4),NA,NA,rep(NA,17)),
+                            method="ML")
+
+
+# La profe tiene la gráfica
+
+#modelo3b=Arima(yt,order=c(19,0,0),xreg=as.matrix(X3),method="ML") 
