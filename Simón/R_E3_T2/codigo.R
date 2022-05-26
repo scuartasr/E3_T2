@@ -424,3 +424,5 @@ plot(armasubsets(residuals(modelo_global),
                  nar=12,nma=12,
                  y.name='AR',
                  ar.method='ml'))
+
+
