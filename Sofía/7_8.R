@@ -433,6 +433,7 @@ plot(armasubsets(residuals(modelo_global),
 
 #Modelo 1 AR(19) no es posible obtener pronosticos por ip
 
+
 mod1=regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(19,0,0),method="ML") 
 ytpron1 = mod1$forecast
 
@@ -447,20 +448,23 @@ ytpron2 = mod2$forecast
 accuracy(ytpron2,ytf) 
 
 #modelo 3 ARMA(4,8)(1,1)[12]
-mod3=regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(4,0,8),seasonal=list(order=c(1,0,1)), 
+mod3=regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(3,0,9),seasonal=list(order=c(1,0,0)), 
                          method="ML") 
 ytpron3 = mod3$forecast
+ythat3=mod3$fitted
 
 #Medidas precisión pronósticos puntuales 
 accuracy(ytpron3,ytf) 
 
 #modelo 4 ARMA(3, 12)
-mod3=regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(3,0,12),method="ML") 
-
-ytpron3 = mod3$forecast
+mod4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,
+                            newdata=X1nuevo,order=c(12,0,10),
+                            fixed= c(NA,NA,NA,rep(0,3),NA,rep(0,4),NA,rep(0,3),NA,rep(0,4),NA,NA),
+                            method="ML")
+ytpron4 = mod4$forecast
 
 #Medidas precisión pronósticos puntuales 
-accuracy(ytpron3,ytf) 
+accuracy(ytpron4,ytf) 
 
 # ------------------------------------------
 # Comparacion grafica de los pronosticos
