@@ -451,7 +451,7 @@ accuracy(ytpron2,ytf)
 mod3=regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(3,0,9),seasonal=list(order=c(1,0,0)), 
                          method="ML") 
 ytpron3 = mod3$forecast
-ythat3=mod3$fitted
+para<-mod3$coefficients
 
 #Medidas precisión pronósticos puntuales 
 accuracy(ytpron3,ytf) 
@@ -464,7 +464,8 @@ mod4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,
 ytpron4 = mod4$forecast
 
 #Medidas precisión pronósticos puntuales 
-accuracy(ytpron4,ytf) 
+accuracy(ytpron4,ytf)
+
 
 # ------------------------------------------
 # Comparacion grafica de los pronosticos
