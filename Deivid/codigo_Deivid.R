@@ -441,11 +441,12 @@ modelo3 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nu
 coef(modelo3)
 
 # Modelo 4 12x12 renglón 3, incluir a phi7 y theta 10
-modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(12,0,12),seasonal=list(order=c(1,0,0)),
-                            fixed= c(NA,NA,NA,rep(0,3),NA,rep(0,4),NA,rep(0,3),NA,rep(0,4),NA,NA,rep(NA,17)),
+modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,
+                            newdata=X1nuevo,order=c(12,0,10),
+                            fixed= c(NA,NA,NA,rep(0,3),NA,rep(0,4),NA,rep(0,3),NA,rep(0,4),NA,NA),
                             method="ML")
+coef(modelo4)
 
-
-# La profe tiene la gráfica
+parallel()# La profe tiene la gráfica
 
 #modelo3b=Arima(yt,order=c(19,0,0),xreg=as.matrix(X3),method="ML") 
