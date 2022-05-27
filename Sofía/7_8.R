@@ -498,5 +498,76 @@ axis(1,at = time(ytf),
      labels = c("dic-20", "ene-21", "feb-21", "mar-21",
                 "abr-21", "may-21", "jun-21", "jul-21",
                 "ago-21", "sep-21", "oct-21", "nov-21"))
+###---------------------------------------------------------------
+###                             PUNTO 7
+###---------------------------------------------------------------
+#MEJOR MODELO LOCAL DEL TRABAJO 1 FUE EL MODELO 4 Filtro descomposicion 
+#combinado con loess lineal, usando criterio GCV para escoger parametro
+#suavizamiento loess
 
 
+modloc=Descomp.Loess(serie.ajuste=yt,h=m,tipo.descomp="multiplicative",grado=1,criterio="gcv")
+
+#Graficos de la serie y su ajuste final
+
+#LOCAL
+plot(datos,lwd=2)
+lines(fitted(modloc),col=2,lwd=2)
+legend("topleft",legend=c("Original","Ajuste por DLL(GCV)"),col=c(1,2),lty=1,lwd=2,cex = 0.6)
+Criteriosmodelo=exp.crit.inf.resid(residuales=residuals(modloc),n.par=modloc$p)
+#MOD1AR19
+plot(datos,lwd=2)
+lines(fitted(mod1),col=2,lwd=2)
+legend("topleft",legend=c("Original","AR(19)"),col=c(1,2),lty=1,lwd=2,cex = 1)
+Criteriosmodelo1=exp.crit.inf.resid(residuales=residuals(mod1),n.par=mod1$p); Criteriosmodelo1
+
+
+#MOD2ARMA(7,11)
+
+plot(datos,lwd=2)
+lines(fitted(mod2),col=2,lwd=2)
+legend("topleft",legend=c("Original","ARMA(7,11)"),col=c(1,2),lty=1,lwd=2,cex = 1)
+Criteriosmodelo2=exp.crit.inf.resid(residuales=residuals(mod2),n.par=mod2$p); Criteriosmodelo2
+
+
+#MOD3 ARMA(4,8)(1,1)[12]
+plot(datos,lwd=2)
+lines(fitted(mod3),col=2,lwd=2)
+legend("topleft",legend=c("Original","ARMA(4,8)(1,1)[12]"),col=c(1,2),lty=1,lwd=2,cex = 0.7)
+Criteriosmodelo3=exp.crit.inf.resid(residuales=residuals(mod3),n.par=mod3$p); Criteriosmodelo3
+
+
+#modelo 4 
+plot(datos,lwd=2)
+lines(fitted(mod4),col=2,lwd=2)
+legend("topleft",legend=c("Original","modelo 4"),col=c(1,2),lty=1,lwd=2,cex = 0.7)
+Criteriosmodelo4=exp.crit.inf.resid(residuales=residuals(mod4),n.par=mod4$p); Criteriosmodelo4
+
+
+###----------------------------------------------------------------
+###               GRAFICO RESIDUALES
+###-----------------------------------------------------------------
+#Gráficos de residuales 
+plot(residuals(modloc),lwd=2,ylim=c(min(-2*sqrt(modloc$MSE),residuals(modloc)),max(2*sqrt(modloc$MSE),residuals(modloc))))
+abline(h=c(-2*sqrt(modloc$MSE),0,2*sqrt(modloc$MSE)),col=2)
+legend("topleft",legend="Modelo local: DLL(GCV)",lwd=2,cex=0.5)
+
+
+plot(as.numeric(fitted(modloc)),residuals(modloc),cex=1.5,ylim=c(min(-2*sqrt(modloc$MSE),residuals(modloc)),max(2*sqrt(modloc$MSE),residuals(modloc))))
+abline(h=c(-2*sqrt(modloc$MSE),0,2*sqrt(modloc$MSE)),col=2)
+legend("topleft",legend="Modelo local: DLL(GCV)",lwd=2, cex = 0.5)
+
+
+#ACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo 
+
+acf(as.numeric(residuals(modloc)),ci.type="ma",lag.max=m,main="ACF modelo local",ci.col=2) 
+
+#PACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo 
+
+win.graph(width=4.875,height=3.5,pointsize=8) 
+pacf(as.numeric(residuals(modloc)),lag.max=m,main="PACF modelo local",ci.col=2) 
+
+BP.LB.test(residuals(modelo),maxlag=m,type="Ljung") #test Ljung-Box use máximo m igual al de ACF y PACF 
+
+#Normalidad sobre residuales de ajuste en el modelo. Sólo si no se rechaza supuesto de ruido blanco 
+shapiro.test(residuals(modelo)) 
