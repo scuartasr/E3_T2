@@ -429,15 +429,18 @@ plot(armasubsets(residuals(modelo_global),
 # ---------------- siguiendo con lo mío ----------------------#
 # Modelo 1 AR(19)
 modelo1 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(19,0,0),method="ML") 
+summary(modelo1)
 coef(modelo1)
 
 # Modelo 2 ARMA (7,11)
 modelo2 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(7,0,11),method="ML") 
+summary(modelo2)
 coef(modelo2)
 
 # Modelo 3 ARMA(3,9)(1,0)[12]
 modelo3 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(3,0,9),seasonal=list(order=c(1,0,0)),
                             method="ML")
+summary(modelo3)
 coef(modelo3)
 
 # Modelo 4 12x12 renglón 3, incluir a phi7 y theta 10
@@ -447,6 +450,6 @@ modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,
                             method="ML")
 coef(modelo4)
 
-parallel()# La profe tiene la gráfica
+
 
 #modelo3b=Arima(yt,order=c(19,0,0),xreg=as.matrix(X3),method="ML") 
