@@ -432,16 +432,43 @@ modelo1 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nu
 summary(modelo1)
 coef(modelo1)
 
+#C?lculo valores ajustados
+yhat1=modelo1$fitted
+
+plot(datos)
+lines(yhat1,col=2)
+legend("topleft",legend=c("Real","ajustada modelo1"),col=c(1,2),lty=1)
+
+Criterios1=exp.crit.inf.resid(residuales=residuals(modelo1),n.par=36);Criterios1
+
 # Modelo 2 ARMA (7,11)
 modelo2 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(7,0,11),method="ML") 
 summary(modelo2)
 coef(modelo2)
+
+#C?lculo valores ajustados
+yhat2=modelo2$fitted
+
+plot(datos)
+lines(yhat2,col=2)
+legend("topleft",legend=c("Real","ajustada modelo2"),col=c(1,2),lty=1)
+
+Criterios2=exp.crit.inf.resid(residuales=residuals(modelo2),n.par=35);Criterios2
 
 # Modelo 3 ARMA(3,9)(1,0)[12]
 modelo3 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(3,0,9),seasonal=list(order=c(1,0,0)),
                             method="ML")
 summary(modelo3)
 coef(modelo3)
+
+#C?lculo valores ajustados
+yhat3=modelo3$fitted
+
+plot(datos)
+lines(yhat3,col=2)
+legend("topleft",legend=c("Real","ajustada modelo3"),col=c(1,2),lty=1)
+
+Criterios3=exp.crit.inf.resid(residuales=residuals(modelo3),n.par=30);Criterios3
 
 # Modelo 4 12x12 renglón 3, incluir a phi7 y theta 10
 modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,
@@ -450,6 +477,13 @@ modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,
                             method="ML")
 coef(modelo4)
 
+#C?lculo valores ajustados
+yhat4=modelo4$fitted
 
+plot(datos)
+lines(yhat4,col=2)
+legend("topleft",legend=c("Real","ajustada modelo4"),col=c(1,2),lty=1)
+
+Criterios4=exp.crit.inf.resid(residuales=residuals(modelo4),n.par=25);Criterios4
 
 #modelo3b=Arima(yt,order=c(19,0,0),xreg=as.matrix(X3),method="ML") 
