@@ -442,6 +442,9 @@ legend("topleft",legend=c("Real","ajustada modelo1"),col=c(1,2),lty=1)
 
 Criterios1=exp.crit.inf.resid(residuales=residuals(modelo1),n.par=36);Criterios1
 
+# Ljung_Box
+BP.LB.test(residuals(modelo1),maxlag=36,type="Ljung")
+
 #Gr?fico de residuales de ajuste vs tiempo mod1
 win.graph(width=4.8,height=4.8,pointsize=8) 
 plot(t,residuals(modelo1),type="o")
@@ -480,6 +483,8 @@ legend("topleft",legend=c("Real","ajustada modelo2"),col=c(1,2),lty=1)
 
 Criterios2=exp.crit.inf.resid(residuales=residuals(modelo2),n.par=35);Criterios2
 
+# Ljung_Box
+BP.LB.test(residuals(modelo2),maxlag=36,type="Ljung")
 
 #Gr?fico de residuales de ajuste vs tiempo mod2
 win.graph(width=4.8,height=4.8,pointsize=8) 
@@ -520,6 +525,8 @@ legend("topleft",legend=c("Real","ajustada modelo3"),col=c(1,2),lty=1)
 
 Criterios3=exp.crit.inf.resid(residuales=residuals(modelo3),n.par=30);Criterios3
 
+# Ljung_Box
+BP.LB.test(residuals(modelo3),maxlag=36,type="Ljung")
 
 #Gr?fico de residuales de ajuste vs tiempo
 win.graph(width=4.8,height=4.8,pointsize=8) 
@@ -561,7 +568,8 @@ legend("topleft",legend=c("Real","ajustada modelo4"),col=c(1,2),lty=1)
 
 Criterios4=exp.crit.inf.resid(residuales=residuals(modelo4),n.par=25);Criterios4
 
-
+# Ljung_Box
+BP.LB.test(residuals(modelo4),maxlag=36,type="Ljung")
 
 #Gr?fico de residuales de ajuste vs tiempo mod4
 win.graph(width=4.8,height=4.8,pointsize=8) 
@@ -585,3 +593,12 @@ shapiro.test(residuals(modelo4))
 win.graph(width=4.8,height=4.8,pointsize=8)
 qqnorm(residuals(modelo4),main="Gráfico de normalidad residuos modelo4")
 qqline(residuals(modelo4),col=2)
+
+
+
+
+# Shapiro
+shapiro.test(residuals(modelo1))
+shapiro.test(residuals(modelo2))
+shapiro.test(residuals(modelo3))
+shapiro.test(residuals(modelo4))
