@@ -29,7 +29,7 @@ source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Est
 
 # Lectura de la base de datos
 enlace <- "./anexos-emmet-noviembre-2021-1-total industria-modif.csv"
-datos <- read.table(file = enlace,
+datos <- read.table(file = file.choose(),
                     header=T,
                     sep=";",
                     skip=15,
@@ -429,16 +429,21 @@ plot(armasubsets(residuals(modelo_global),
 # ---------------- siguiendo con lo mío ----------------------#
 
 # Modelo 1 AR(19)
-modelo1 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(19,0,0),method="ML") 
+modelo1 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,
+                            data=X1,newdata=X1nuevo,
+                            order=c(19,0,0),method="ML") 
 summary(modelo1)
 coef(modelo1)
 
 #C?lculo valores ajustados
 yhat1=modelo1$fitted
 
-plot(datos)
+par(adj = 0.5)
+plot(datos,
+     xlab = "A�o",
+     ylab = "�ndice de ventas nominales")
 lines(yhat1,col=2)
-legend("topleft",legend=c("Real","ajustada modelo1"),col=c(1,2),lty=1)
+legend("topleft",legend=c("Real","Ajuste del modelo uno"),col=c(1,2),lty=1)
 
 Criterios1=exp.crit.inf.resid(residuales=residuals(modelo1),n.par=36);Criterios1
 
@@ -446,40 +451,49 @@ Criterios1=exp.crit.inf.resid(residuales=residuals(modelo1),n.par=36);Criterios1
 BP.LB.test(residuals(modelo1),maxlag=36,type="Ljung")
 
 #Gr?fico de residuales de ajuste vs tiempo mod1
-win.graph(width=4.8,height=4.8,pointsize=8) 
-plot(t,residuals(modelo1),type="o")
+#win.graph(width=4.8,height=4.8,pointsize=8) 
+plot(t,residuals(modelo1),type="o",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo uno')
 abline(h=c(-2*sqrt(modelo1$sigma2),0,2*sqrt(modelo1$sigma2)),col=2)
 
 #Gr?fico de residuales de ajuste vs ajustados
-win.graph(width=4.8,height=4.8,pointsize=8)
-plot(yhat1, residuals(modelo1), type="p")
+#win.graph(width=4.8,height=4.8,pointsize=8)
+plot(yhat1, residuals(modelo1), type="p",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo uno')
 abline(h=c(-2*sqrt(modelo1$sigma2),0,2*sqrt(modelo1$sigma2)),col=2)
 
 #ACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 acf(as.numeric(residuals(modelo1)),ci.type="ma",lag.max=36,main="ACF modelo1",ci.col=2)
 
 #PACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 pacf(as.numeric(residuals(modelo1)),lag.max=36,main="PACF modelo1",ci.col=2) 
 
 shapiro.test(residuals(modelo1))
-win.graph(width=4.8,height=4.8,pointsize=8)
+#win.graph(width=4.8,height=4.8,pointsize=8)
 qqnorm(residuals(modelo1),main="Gráfico de normalidad residuos modelo1")
 qqline(residuals(modelo1),col=2)
 
 
 # Modelo 2 ARMA (7,11)
-modelo2 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(7,0,11),method="ML") 
+modelo2 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,
+                            data=X1,newdata=X1nuevo,
+                            order=c(7,0,11),method="ML") 
 summary(modelo2)
 coef(modelo2)
 
 #C?lculo valores ajustados
 yhat2=modelo2$fitted
 
-plot(datos)
+par(adj = 0.5)
+plot(datos,
+     xlab = "A�o",
+     ylab = "�ndice de ventas nominales")
 lines(yhat2,col=2)
-legend("topleft",legend=c("Real","ajustada modelo2"),col=c(1,2),lty=1)
+legend("topleft",legend=c("Real","Ajuste del modelo dos"),col=c(1,2),lty=1)
 
 Criterios2=exp.crit.inf.resid(residuales=residuals(modelo2),n.par=35);Criterios2
 
@@ -487,31 +501,38 @@ Criterios2=exp.crit.inf.resid(residuales=residuals(modelo2),n.par=35);Criterios2
 BP.LB.test(residuals(modelo2),maxlag=36,type="Ljung")
 
 #Gr?fico de residuales de ajuste vs tiempo mod2
-win.graph(width=4.8,height=4.8,pointsize=8) 
-plot(t,residuals(modelo2),type="o")
+#win.graph(width=4.8,height=4.8,pointsize=8) 
+plot(t,residuals(modelo2),type="o",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo dos')
 abline(h=c(-2*sqrt(modelo2$sigma2),0,2*sqrt(modelo2$sigma2)),col=2)
 
 #Gr?fico de residuales de ajuste vs ajustados
-win.graph(width=4.8,height=4.8,pointsize=8)
-plot(yhat2, residuals(modelo2), type="p")
+#win.graph(width=4.8,height=4.8,pointsize=8)
+plot(yhat2, residuals(modelo2), type="p",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo dos')
 abline(h=c(-2*sqrt(modelo2$sigma2),0,2*sqrt(modelo2$sigma2)),col=2)
 
 #ACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 acf(as.numeric(residuals(modelo2)),ci.type="ma",lag.max=36,main="ACF modelo2",ci.col=2)
 
 #PACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 pacf(as.numeric(residuals(modelo2)),lag.max=36,main="PACF modelo2",ci.col=2)
 
 shapiro.test(residuals(modelo2))
-win.graph(width=4.8,height=4.8,pointsize=8)
+#win.graph(width=4.8,height=4.8,pointsize=8)
 qqnorm(residuals(modelo2),main="Gráfico de normalidad residuos modelo2")
 qqline(residuals(modelo2),col=2)
 
 
 # Modelo 3 ARMA(3,9)(1,0)[12]
-modelo3 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,newdata=X1nuevo,order=c(3,0,9),seasonal=list(order=c(1,0,0)),
+modelo3 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,
+                            data=X1,newdata=X1nuevo,
+                            order=c(3,0,9),
+                            seasonal=list(order=c(1,0,0)),
                             method="ML")
 summary(modelo3)
 coef(modelo3)
@@ -519,9 +540,12 @@ coef(modelo3)
 #C?lculo valores ajustados
 yhat3=modelo3$fitted
 
-plot(datos)
+par(adj = 0.5)
+plot(datos,
+     xlab = "A�o",
+     ylab = "�ndice de ventas nominales")
 lines(yhat3,col=2)
-legend("topleft",legend=c("Real","ajustada modelo3"),col=c(1,2),lty=1)
+legend("topleft",legend=c("Real","Ajuste del modelo tres"),col=c(1,2),lty=1)
 
 Criterios3=exp.crit.inf.resid(residuales=residuals(modelo3),n.par=30);Criterios3
 
@@ -529,42 +553,51 @@ Criterios3=exp.crit.inf.resid(residuales=residuals(modelo3),n.par=30);Criterios3
 BP.LB.test(residuals(modelo3),maxlag=36,type="Ljung")
 
 #Gr?fico de residuales de ajuste vs tiempo
-win.graph(width=4.8,height=4.8,pointsize=8) 
-plot(t,residuals(modelo3),type="o")
+#win.graph(width=4.8,height=4.8,pointsize=8) 
+plot(t,residuals(modelo3),type="o",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo tres')
 abline(h=c(-2*sqrt(modelo3$sigma2),0,2*sqrt(modelo3$sigma2)),col=2)
 
 #Gr?fico de residuales de ajuste vs ajustados
-win.graph(width=4.8,height=4.8,pointsize=8)
-plot(yhat3, residuals(modelo3), type="p")
+#win.graph(width=4.8,height=4.8,pointsize=8)
+plot(yhat3, residuals(modelo3), type="p",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo tres')
 abline(h=c(-2*sqrt(modelo3$sigma2),0,2*sqrt(modelo3$sigma2)),col=2)
 
 #ACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 acf(as.numeric(residuals(modelo3)),ci.type="ma",lag.max=36,main="ACF modelo3",ci.col=2)
 
 #PACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 pacf(as.numeric(residuals(modelo3)),lag.max=36,main="PACF modelo3",ci.col=2) 
 
 
 shapiro.test(residuals(modelo3))
-win.graph(width=4.8,height=4.8,pointsize=8)
+#win.graph(width=4.8,height=4.8,pointsize=8)
 qqnorm(residuals(modelo3),main="Gráfico de normalidad residuos modelo3")
 qqline(residuals(modelo3),col=2)
 
 # Modelo 4 ARMA(12,10), con phi7 y theta 10
-modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,data=X1,
+modelo4 = regexpo.ErrorARMA(respuesta=yt,names.param=param2,
+                            data=X1,
                             newdata=X1nuevo,order=c(12,0,10),
-                            fixed= c(NA,NA,NA,rep(0,3),NA,rep(0,4),NA,rep(0,3),NA,rep(0,4),NA,NA),
+                            fixed= c(NA,NA,NA,rep(0,3),NA,rep(0,4),
+                                     NA,rep(0,3),NA,rep(0,4),NA,NA),
                             method="ML")
 coef(modelo4)
 
 #C?lculo valores ajustados
 yhat4=modelo4$fitted
 
-plot(datos)
+par(adj = 0.5)
+plot(datos,
+     xlab = "A�o",
+     ylab = "�ndice de ventas nominales")
 lines(yhat4,col=2)
-legend("topleft",legend=c("Real","ajustada modelo4"),col=c(1,2),lty=1)
+legend("topleft",legend=c("Real","Ajuste del modelo cuatro"),col=c(1,2),lty=1)
 
 Criterios4=exp.crit.inf.resid(residuales=residuals(modelo4),n.par=25);Criterios4
 
@@ -572,25 +605,29 @@ Criterios4=exp.crit.inf.resid(residuales=residuals(modelo4),n.par=25);Criterios4
 BP.LB.test(residuals(modelo4),maxlag=36,type="Ljung")
 
 #Gr?fico de residuales de ajuste vs tiempo mod4
-win.graph(width=4.8,height=4.8,pointsize=8) 
-plot(t,residuals(modelo4),type="o")
+#win.graph(width=4.8,height=4.8,pointsize=8) 
+plot(t,residuals(modelo4),type="o",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo cuatro')
 abline(h=c(-2*sqrt(modelo4$sigma2),0,2*sqrt(modelo4$sigma2)),col=2)
 
 #Gr?fico de residuales de ajuste vs ajustados
-win.graph(width=4.8,height=4.8,pointsize=8)
-plot(yhat4, residuals(modelo4), type="p")
+#win.graph(width=4.8,height=4.8,pointsize=8)
+plot(yhat4, residuals(modelo4), type="p",
+     xlab = 'Periodo [mes]',
+     ylab = 'Residuales del modelo cuatro')
 abline(h=c(-2*sqrt(modelo4$sigma2),0,2*sqrt(modelo4$sigma2)),col=2)
 
 #ACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 acf(as.numeric(residuals(modelo4)),ci.type="ma",lag.max=36,main="ACF modelo4",ci.col=2)
 
 #PACF sobre residuales de ajuste. Use valor para m el que se indica en la guía del trabajo
-win.graph(width=4.875,height=3.5,pointsize=8)
+#win.graph(width=4.875,height=3.5,pointsize=8)
 pacf(as.numeric(residuals(modelo4)),lag.max=36,main="PACF modelo4",ci.col=2) 
 
 shapiro.test(residuals(modelo4))
-win.graph(width=4.8,height=4.8,pointsize=8)
+#win.graph(width=4.8,height=4.8,pointsize=8)
 qqnorm(residuals(modelo4),main="Gráfico de normalidad residuos modelo4")
 qqline(residuals(modelo4),col=2)
 
