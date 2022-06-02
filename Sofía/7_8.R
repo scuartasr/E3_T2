@@ -570,3 +570,9 @@ BP.LB.test(residuals(modelo),maxlag=m,type="Ljung") #test Ljung-Box use máximo m
 
 #Normalidad sobre residuales de ajuste en el modelo. Sólo si no se rechaza supuesto de ruido blanco 
 shapiro.test(residuals(modelo)) 
+
+
+
+###pronost
+ytpronloc=modloc$ytpron
+accuracy(ytpronloc,ytf)
