@@ -27,8 +27,8 @@ source("https://raw.githubusercontent.com/NelfiGonzalez/Funciones-de-Usuario-Est
 ### ----------------------------------------------------------------------
 
 # Lectura de la base de datos
-enlace <- "C:/Users/Sofia/Documents/GitHub/E3_T2/Sofía/anexos-emmet-noviembre-2021-1-total industria-modif.csv"
-datos <- read.table(file = enlace,
+#enlace <- "C:/Users/Sofia/Documents/GitHub/E3_T2/Sofía/anexos-emmet-noviembre-2021-1-total industria-modif.csv"
+datos <- read.table(file = file.choose(),
                     header=T,
                     sep=";",
                     skip=15,
@@ -480,8 +480,7 @@ plot(ytf, type = "b", pch = 19, lty = 1, col = 1, lwd = 2,
      ylab = "Índice de ventas nominales",
      xlab = "Periodo [mmm - yy]",
      ylim = c(min(vector.auxiliar), max(vector.auxiliar)),
-     xaxt = "n",
-     main = "Comparación de los pronósticos para el periodo ex post")
+     xaxt = "n")
 lines(ytpron1, col = 2, pch = 2, lty = 2, type = "b", lwd = 2)
 lines(ytpron2, col = 3, pch = 3, lty = 3, type = "b", lwd = 2)
 lines(ytpron3, col = 4, pch = 4, lty = 4, type = "b", lwd = 2)
